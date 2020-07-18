@@ -49,10 +49,11 @@ let scrape = async () => {
     
     browser.close()
     const end = now('milli')
-    console.log('Execution time: ' + (end - start) + ' milliseconds')
+    console.log('Puppeteer execution time: ' + (end - start) + ' milliseconds')
 
     return result
 };
-scrape().then((value) => {
-    console.log(value)
-})
+
+module.exports = {
+    scrape
+}

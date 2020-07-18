@@ -22,31 +22,49 @@ let scrape = async () => {
 
     const response = await got(url);
     const $ = cheerio.load(response.body);
-  
+
     const result = {}
     let nextMatch = {}
     let lastMatch = {}
 
+    // next match
     nextMatch.teamA = $('.area_proximo_jogo .proximo .escudo_a img').prop('alt')
     nextMatch.teamB = $('.area_proximo_jogo .proximo .escudo_b img').prop('alt')
     nextMatch.league = $('.area_proximo_jogo .proximo .infos a span').text()
     nextMatch.matchDay = $('.area_proximo_jogo .proximo .infos p').text()
     result.nextMatch = nextMatch
 
+    // last match
     lastMatch.teamA = $('.area_proximo_jogo .ultimos .escudo_a img').prop('alt')
-    lastMatch.teamAGoals = $('.area_proximo_jogo .ultimos .escudo_a span').text()
     lastMatch.teamB = $('.area_proximo_jogo .ultimos .escudo_b img').prop('alt')
-    lastMatch.teamBGoals = $('.area_proximo_jogo .ultimos .escudo_b span').text()
-    lastMatch.league = $('.area_proximo_jogo .ultimos .infos a span').text()
-    lastMatch.matchDay = $('.area_proximo_jogo .ultimos .infos p').text()
+    $('.area_proximo_jogo .ultimos .escudo_a span').each(function(index, value){
+        if (index === 0) {
+            lastMatch.teamAGoals = $(this).text()
+        }
+    });
+    $('.area_proximo_jogo .ultimos .escudo_b span').each(function(index, value){
+        if (index === 0) {
+            lastMatch.teamBGoals = $(this).text()
+        }
+    });
+    $('.area_proximo_jogo .ultimos .infos a span').each(function(index, value){
+        if (index === 0) {
+            lastMatch.league = $(this).text()
+        }
+    });
+    $('.area_proximo_jogo .ultimos .infos p').each(function(index, value){
+        if (index === 0) {
+            lastMatch.matchDay = $(this).text()
+        }
+    });
     result.lastMatch = lastMatch
 
     const end = now('milli')
-    console.log('Execution time: ' + (end - start) + ' milliseconds')
+    console.log('Cheerio execution time: ' + (end - start) + ' milliseconds')
 
     return result
-  };
+};
 
-  scrape().then((value) => {
-    console.log(value)
-})
+module.exports = {
+    scrape
+}
