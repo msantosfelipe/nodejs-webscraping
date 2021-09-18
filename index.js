@@ -5,6 +5,10 @@ puppeteer.scrape().then((value) => {
     console.log(value)
 })
 
+cheerio.scrapeNews().then((value) => {
+    console.log(value)
+})
+
 cheerio.scrape().then((value) => {
     console.log(value)
 })

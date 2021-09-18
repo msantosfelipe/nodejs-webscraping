@@ -37,25 +37,23 @@ let scrape = async () => {
     // last match
     lastMatch.teamA = $('.area_proximo_jogo .ultimos .escudo_a img').prop('alt')
     lastMatch.teamB = $('.area_proximo_jogo .ultimos .escudo_b img').prop('alt')
-    $('.area_proximo_jogo .ultimos .escudo_a span').each(function(index, value){
+    $('.area_proximo_jogo .ultimos .escudo_a span').each(function (index, value) {
         if (index === 0) {
             lastMatch.teamAGoals = $(this).text()
         }
     });
-    $('.area_proximo_jogo .ultimos .escudo_b span').each(function(index, value){
+    $('.area_proximo_jogo .ultimos .escudo_b span').each(function (index, value) {
         if (index === 0) {
             lastMatch.teamBGoals = $(this).text()
         }
     });
-    $('.area_proximo_jogo .ultimos .infos a span').each(function(index, value){
+    $('.area_proximo_jogo .ultimos .infos a span').each(function (index, value) {
         if (index === 0) {
             lastMatch.league = $(this).text()
         }
     });
-    $('.area_proximo_jogo .ultimos .infos p').each(function(index, value){
-        if (index === 0) {
-            lastMatch.matchDay = $(this).text()
-        }
+    $('.area_proximo_jogo .ultimos .infos p').each(function (index, value) {
+        console.log($(this).text())
     });
     result.lastMatch = lastMatch
 
@@ -65,6 +63,32 @@ let scrape = async () => {
     return result
 };
 
+let scrapeNews = async () => {
+    const start = now('milli')
+
+    const response = await got(url + 'noticias-do-bahia');
+    const $ = cheerio.load(response.body);
+
+    const result = []
+    $('.mes_listagem .item .noticia_titulo').each(function (index, value) {
+        if (index <= 5) {
+            var news = {}
+            news.title = $(this).text()
+            result.push(news)
+        }
+    });
+    $('.mes_listagem .item .noticia_chamada').each(function (index, value) {
+        if (index <= 5) {
+            var news = result[index]
+            news.content = $(this).text()
+        }
+    });
+    const end = now('milli')
+    console.log('Cheerio execution time: ' + (end - start) + ' milliseconds')
+
+    return result
+};
+
 module.exports = {
-    scrape
+    scrape, scrapeNews
 }
